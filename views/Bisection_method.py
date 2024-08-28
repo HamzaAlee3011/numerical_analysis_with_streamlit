@@ -1,6 +1,11 @@
 import streamlit as st
 import sympy as sp
 
+colf1, colf2, colf3 = st.columns([1, 2, 1], gap='small')
+with colf2:
+    st.header('Bisection Method')
+    st.write('\n')
+
 tab1, tab2 = st.tabs(["Main Application", "Symbols Guide"])
 
 with tab1:
