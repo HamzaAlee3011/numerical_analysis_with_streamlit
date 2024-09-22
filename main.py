@@ -1,5 +1,5 @@
 import streamlit as st
-
+from email_sender import feedback_function
 # PAGE SETUP
 st.set_page_config(layout='wide')
 
@@ -45,7 +45,14 @@ pg = st.navigation({
 
 # st.logo('assets/example_logo.png')
 # st.sidebar.link_button(label='About me', url='https://about-hamza-ali.streamlit.app/')
-# with 💥''')
+with st.sidebar:
+    st.write('\n')
+    st.write('\n')
+    st.write("Enjoying the app?")
+    feedback_button = st.button("Give Us Your Feedback")
+    if feedback_button:
+        feedback_function()
+
 
 #RUN NAVIGATION
 pg.run()
