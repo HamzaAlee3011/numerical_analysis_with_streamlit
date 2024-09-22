@@ -4,8 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Email sender details
-your_email = "ameer.hamza.alee3011@gmail.com"
-your_password = "hjzvupobibsrigsn"
+your_email = "aleehamza204@gmail.com"
+your_password = "lsqmqypcbnmklncs"
 
 # Function to send email
 @st.dialog(title='Feedback Form')
