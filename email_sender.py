@@ -4,8 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Email sender details
-your_email = st.streamlit.secrets['email']
-your_password = st.streamlit.secrets['password']
+your_email = "ameer.hamza.alee3011@gmail.com"
+your_password = "hjzvupobibsrigsn"
 
 # Function to send email
 @st.dialog(title='Feedback Form')
