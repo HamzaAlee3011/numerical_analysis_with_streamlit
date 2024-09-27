@@ -17,6 +17,14 @@ gsm_method_page = st.Page(
     default=True
     # icon=":material/bid_landscape:",
 )
+
+nddi_method_page = st.Page(
+
+    page="views/Newtons_DDI_formula.py",
+    title="Newton's Divided Difference Interpolation Method",
+    # icon=":material/bid_landscape:",
+)
+
 # about_me = st.Page(
 #     page="views/about_me.py",
 #     title="About Me",
@@ -35,7 +43,7 @@ about_app = st.Page(
 
 # NAVIGATION SETUP (WITH SECTIONS)
 pg = st.navigation({
-    'Applications': [bisection_method_page, gsm_method_page],
+    'Applications': [bisection_method_page, gsm_method_page, nddi_method_page],
     # 'Usage': [instructions],
     'Info': [about_app]
 })
@@ -46,8 +54,8 @@ pg = st.navigation({
 # st.logo('assets/example_logo.png')
 # st.sidebar.link_button(label='About me', url='https://about-hamza-ali.streamlit.app/')
 with st.sidebar:
-    st.write('\n')
-    st.write('\n')
+    # st.write('\n')
+    # st.write('\n')
     st.write("Enjoying the app?")
     feedback_button = st.button("Give Us Your Feedback")
     if feedback_button:
