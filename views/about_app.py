@@ -43,6 +43,7 @@ st.write("""
 - **:grey-background[Streamlit]:** For creating the interactive web application interface. [Streamlit Documentation](https://docs.streamlit.io/)
 - **:grey-background[SymPy]:** For symbolic mathematics, solving equations, and implementing numerical methods. [SymPy Documentation](https://docs.sympy.org/)
 - **:grey-background[Pandas]:** For data manipulation and handling tabular data efficiently. [Pandas Documentation](https://pandas.pydata.org/)
+- **:grey-background[Plotly]:** For generating visual diagrams. [Plotly Documentation](https://plotly.com/python/)
 """)
 
 
