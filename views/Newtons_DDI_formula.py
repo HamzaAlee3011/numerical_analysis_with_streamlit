@@ -74,11 +74,15 @@ if not edited_data.empty:
         st.write("Newton's Divided Difference Table:")
         st.dataframe(dd_table, use_container_width=True)
 
-    with col1:
-        st.write('\n')
-        st.write('\n')
+    col3, col4= st.columns([1, 2], gap='small', vertical_alignment='bottom')
+
+    st.write('\n')
+    st.write('\n')
+
+    with col3:
         # Newton's divided difference interpolation to find y(15)
         x_to_predict = st.number_input('x to predict')
+
     y0 = fx_values[0]  # f(x0), where x0 is the first value in x_values
     result = y0
 
@@ -89,9 +93,13 @@ if not edited_data.empty:
             term *= (x_to_predict - x_values[j])  # Multiply by (x - xj)
         result += term  # Add to the result
 
-    with col1:
-        # Display the result
-        st.write(f"$$Estimated \ value \ : \ $$`{result}`")
+
+    with col4:
+        st.code(f'Result: {result}', language='python')
+
+    col6, col7 = st.columns([0.5, 3], gap='small')
+
+    with col6:
         connect_lines = st.checkbox('Connect lines')
 
     # Creating scatter plot
@@ -118,7 +126,7 @@ if not edited_data.empty:
                       yaxis_title='Y-axis',
                       showlegend=True)
 
-    with col2:
+    with col7:
         st.write('\n')
         st.write('\n')
         # Displaying scatter plot
