@@ -107,7 +107,7 @@ if not edited_data.empty:
 
     if connect_lines:
         # Add actual data points with a label for the legend
-        fig.add_scatter(x=x_list, y=y_list, mode='markers+lines', name='Data Points')
+        fig.add_scatter(x=x_list, y=y_list, mode='markers+lines', line_shape='spline', name='Data Points')
 
     else:
         # Add actual data points with a label for the legend
