@@ -231,7 +231,7 @@ if not final_data.empty:
             connect_lines = st.checkbox('Connect lines')
 
             # Interval at which the points have to find out
-            interval = st.number_input('Intervals', value=1.0000, min_value=0.0000)
+            interval = st.number_input('Intervals', value=1.0000, min_value=0.0000, format="%0.4f")
 
         with col7:
             # scatter_plot_normal()
