@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import sympy as sp
+from fractions import Fraction
 
 # Function for creating intervals at which the values of SF and BM is to be find
 def create_intervals(x_list_original, interval):
@@ -52,7 +53,7 @@ def scatter_plot_normal():
     # Creating scatter plot
     fig = go.Figure()
 
-    if connect_lines:
+    if connect_interpolated_points:
         fig.add_scatter(x=x_list, y=y_list, mode='markers+lines', line_shape='spline', name='Data Points')
     else:
         fig.add_scatter(x=x_list, y=y_list, mode='markers', name='Data Points')
@@ -73,63 +74,76 @@ def scatter_plot_normal():
 
 inter_polated_x_values = []
 inter_polated_y_values = []
+
 def scatter_plot_sympy_interploated():
-    # Step 1: Define the symbol for x (this is like saying x is the variable in the equation)
+    # Step 1: Define the symbol for x
     x = sp.Symbol('x')
 
     # Step 2: Data points (x-values and y-values in two separate lists)
     x_values = x_list  # From dataframe
     y_values = y_list  # From dataframe
 
-    # Step 3: Combine the x and y values into pairs (like (x1, y1), (x2, y2), ...)
+    # Step 3: Combine the x and y values into pairs
     data_points = list(zip(x_values, y_values))
 
     # Step 4: Create the polynomial equation that fits the data points
     poly_eq = sp.interpolate(data_points, x)
 
+    # Step 5: Extract coefficients and convert to exact fractions
+    poly = sp.Poly(poly_eq, x)  # Get the polynomial
+    fractional_coeffs = [sp.Rational(c).limit_denominator() for c in poly.coeffs()]  # Convert to Rational
+    fractional_coeffs.reverse()
 
+    # Rebuild the polynomial equation with fractional coefficients
+    fractional_eq = sum([fractional_coeffs[i] * x**i for i in range(len(fractional_coeffs))])
 
-    # Step 5: Generate y values for x values from 1 to 20
+    # Step 6: Generate y values for x values from 1 to 20
     for i in create_intervals(x_values, interval=interval):
         y_value = poly_eq.subs(x, i)  # Substitute x = i into the equation
         inter_polated_x_values.append(i)
-        inter_polated_y_values.append(float(y_value))  # Here it's fine to use float for plot
+        inter_polated_y_values.append(float(y_value))  # Use float for plot
 
     # Creating scatter plot
     fig = go.Figure()
 
-    if connect_lines:
+    if connect_interpolated_points:
         fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers+lines', line_shape='spline',
                         name='Interpolated Data Points')
     else:
         fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers', name='Interpolated Data Points')
 
     # Adding original data points
-    fig.add_scatter(x=x_values, y=y_values, mode='markers+lines', name='Original Data Points', line_shape='linear',
-                    marker=dict(color='yellow', size=7)
-                    )
+    if connect_original_points:
+        fig.add_scatter(x=x_values, y=y_values, mode='markers+lines', name='Original Data Points', line_shape='linear',
+                        marker=dict(color='yellow', size=7))
+    else:
+        fig.add_scatter(x=x_values, y=y_values, mode='markers', name='Original Data Points',
+                        marker=dict(color='yellow', size=7))
 
     # Add the predicted value to the plot
     fig.add_scatter(x=[x_to_predict], y=[result], mode='markers', name='Predicted Value',
                     marker=dict(color='red', size=7))
 
-
     # Updating layout for better visibility
-    fig.update_layout(title='Scatter Plot with Predicted Value',
-                      xaxis_title='X-axis',
-                      yaxis_title='Y-axis',
-                      showlegend=True)
+    fig.update_layout(
+        title='Scatter Plot with Predicted Value',
+        xaxis_title='X-axis',
+        yaxis_title='Y-axis',
+        showlegend=True,
+        xaxis=dict(showgrid=True),  # Enable grid on the X-axis
+        yaxis=dict(showgrid=True)  # Enable grid on the Y-axis
+    )
 
     with col7:
         # Display the scatter plot
         st.plotly_chart(fig)
-        # Display the equation in LaTeX format
 
-        col1a, col1b = st.columns([0.5, 2], gap='small')
+        # Display the equation in LaTeX format with fractional coefficients
+        col1a, col1b = st.columns([1, 1], gap='small')
         with col1a:
             st.write("Fitted Polynomial f(x):")
-        with col1b:
-            st.write(poly_eq)# This will display the equation in its symbolic form (fractions, etc.)
+        # with col1b:
+            st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
 
 # st.set_page_config(layout='wide')
 
@@ -217,7 +231,7 @@ if not final_data.empty:
 
     with col3:
         # Input for the x value to predict
-        x_to_predict = st.number_input('x to predict', value=0.0000, min_value=0.0000,format="%0.4f")
+        x_to_predict = st.number_input('x to predict', value=1.0000, min_value=0.0000,format="%0.4f")
 
     y0 = fx_values[0]  # f(x0), where x0 is the first value in x_values
     result = y0
@@ -237,8 +251,11 @@ if not final_data.empty:
         col6, col7 = st.columns([0.5, 3], gap='small')
 
         with col6:
-            # Checkbox for line connection
-            connect_lines = st.checkbox('Connect lines')
+            # Checkbox for line connection of interpolated points
+            connect_interpolated_points = st.checkbox('Connect interpolated points')
+
+            # Checkbox for line connection of original points
+            connect_original_points = st.checkbox('Connect original data points')
 
             # Interval at which the points have to find out
             interval = st.number_input('Intervals', value=1.0000, min_value=0.0000, format="%0.4f")
