@@ -6,37 +6,47 @@ import sympy as sp
 # Function for creating intervals at which the values of SF and BM is to be find
 def create_intervals(x_list_original, interval):
     """
-    Creates a list of specified intervals along the beam length.
+    Creates a list of specified intervals along the x-axis based on the original x_list.
 
     Parameters:
-    beam_length (float): The total length of the beam.
+    x_list_original (list): A list of x-values (such as beam lengths).
     interval (float): The interval value at which to create points.
 
     Returns:
-    list: A list of interval points along the beam length.
+    list: A list of interval points along the x-values.
     """
     # Input validation with warnings
+    if not x_list_original:
+        st.warning("The list of x-values cannot be empty.")
+        return []
+
     if interval <= 0:
         st.warning("Interval must be a positive number.")
         return []
+
     if x_list_original[-1] <= 0:
-        st.warning("Beam length must be a positive number.")
+        st.warning("The maximum x-value must be positive.")
+        return []
+
+    if interval > (x_list_original[-1] - x_list_original[0]):
+        st.warning("The interval is too large for the range of x-values.")
         return []
 
     # Initialize the list and starting point
     intervals = []
-    current_point = 0.0
+    current_point = x_list_original[0]
 
     # Generate intervals using a loop
     while current_point <= x_list_original[-1]:
-        intervals.append(round(current_point, 2))
+        intervals.append(round(current_point, 2))  # Keep values rounded for consistency
         current_point += interval
 
-    # Ensure the last point is exactly the beam length if not already included
-    if intervals[-1] != x_list_original[-1]:
+    # Check if the last point (x_list_original[-1]) is already in the intervals (avoid rounding issues)
+    if round(intervals[-1], 2) != round(x_list_original[-1], 2):
         intervals.append(round(x_list_original[-1], 2))
 
     return intervals
+
 
 def scatter_plot_normal():
     # Creating scatter plot
@@ -95,7 +105,7 @@ def scatter_plot_sympy_interploated():
         fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers', name='Interpolated Data Points')
 
     # Adding original data points
-    fig.add_scatter(x=x_values, y=y_values, mode='markers', name='Original Data Points',
+    fig.add_scatter(x=x_values, y=y_values, mode='markers+lines', name='Original Data Points', line_shape='linear',
                     marker=dict(color='yellow', size=7)
                     )
 
