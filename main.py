@@ -20,7 +20,7 @@ gsm_method_page = st.Page(
 
 nddi_method_page = st.Page(
 
-    page="views/Newtons_DDI_formula.py",
+    page="views/Newtons_DDI_formula2.py",
     title="Newton's Divided Difference Interpolation Method",
     # icon=":material/bid_landscape:",
 )
