@@ -74,6 +74,11 @@ def scatter_plot_normal():
 inter_polated_x_values = []
 inter_polated_y_values = []
 
+import sympy as sp
+
+import sympy as sp
+
+
 def scatter_plot_sympy_interploated():
     # Step 1: Define the symbol for x
     x = sp.Symbol('x')
@@ -90,13 +95,12 @@ def scatter_plot_sympy_interploated():
 
     # Step 5: Extract coefficients and convert to exact fractions
     poly = sp.Poly(poly_eq, x)  # Get the polynomial
-    fractional_coeffs = [sp.Rational(c).limit_denominator() for c in poly.coeffs()]  # Convert to Rational
-    fractional_coeffs.reverse()
+    fractional_coeffs = [sp.Rational(c).limit_denominator() for c in poly.all_coeffs()]  # Convert to Rational
 
-    # Rebuild the polynomial equation with fractional coefficients
-    fractional_eq = sum([fractional_coeffs[i] * x**i for i in range(len(fractional_coeffs))])
+    # Step 6: Rebuild the polynomial equation with fractional coefficients
+    fractional_eq = sum([fractional_coeffs[i] * x**(len(fractional_coeffs) - 1 - i) for i in range(len(fractional_coeffs))])
 
-    # Step 6: Generate y values for x values from 1 to 20
+    # Step 7: Generate y values for x values from 1 to 20
     for i in create_intervals(x_values, interval=interval):
         y_value = poly_eq.subs(x, i)  # Substitute x = i into the equation
         inter_polated_x_values.append(i)
@@ -141,7 +145,6 @@ def scatter_plot_sympy_interploated():
         col1a, col1b = st.columns([1, 1], gap='small')
         with col1a:
             st.write("Fitted Polynomial f(x):")
-        # with col1b:
             st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
 
             # Convert the SymPy equation to string
@@ -151,6 +154,7 @@ def scatter_plot_sympy_interploated():
             equation_str = equation_str.replace('**', '^')
 
             st.code(f'y = {equation_str}')
+
 
 # st.set_page_config(layout='wide')
 
@@ -238,7 +242,7 @@ if not final_data.empty:
 
     with col3:
         # Input for the x value to predict
-        x_to_predict = st.number_input('x to predict', value=x_values[0], min_value=0.0000,format="%0.4f")
+        x_to_predict = st.number_input('x to predict', value=float(x_values[0]),format="%0.4f")
 
     y0 = fx_values[0]  # f(x0), where x0 is the first value in x_values
     result = y0
