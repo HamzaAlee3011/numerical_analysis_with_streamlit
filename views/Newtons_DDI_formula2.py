@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import sympy as sp
-from fractions import Fraction
 
 # Function for creating intervals at which the values of SF and BM is to be find
 def create_intervals(x_list_original, interval):
@@ -145,6 +144,14 @@ def scatter_plot_sympy_interploated():
         # with col1b:
             st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
 
+            # Convert the SymPy equation to string
+            equation_str = str(fractional_eq)
+
+            # Replace '**' with '^' for a more mathematical look
+            equation_str = equation_str.replace('**', '^')
+
+            st.code(f'y = {equation_str}')
+
 # st.set_page_config(layout='wide')
 
 st.header("Newton's Divided Difference Interpolation Method")
@@ -231,7 +238,7 @@ if not final_data.empty:
 
     with col3:
         # Input for the x value to predict
-        x_to_predict = st.number_input('x to predict', value=1.0000, min_value=0.0000,format="%0.4f")
+        x_to_predict = st.number_input('x to predict', value=x_values[0], min_value=0.0000,format="%0.4f")
 
     y0 = fx_values[0]  # f(x0), where x0 is the first value in x_values
     result = y0
@@ -258,7 +265,7 @@ if not final_data.empty:
             connect_original_points = st.checkbox('Connect original data points')
 
             # Interval at which the points have to find out
-            interval = st.number_input('Intervals', value=1.0000, min_value=0.0000, format="%0.4f")
+            interval = st.number_input('Intervals', value=0.0000, min_value=0.0000, format="%0.4f")
 
         with col7:
             # scatter_plot_normal()
