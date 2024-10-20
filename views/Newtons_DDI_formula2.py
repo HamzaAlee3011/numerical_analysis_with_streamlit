@@ -128,7 +128,7 @@ def scatter_plot_sympy_interploated():
 
     # Updating layout for better visibility
     fig.update_layout(
-        title='Scatter Plot with Predicted Value',
+        title=graph_title_input,
         xaxis_title=xaxis_title_input,
         yaxis_title=yaxis_title_input,
         showlegend=True,
@@ -268,8 +268,14 @@ if not final_data.empty:
             connect_original_points = st.checkbox('Connect original data points')
 
         with col7:
+            # X-axis title
             xaxis_title_input = st.text_input('Title x-axis', value='x')
+
+            # Y-axis title
             yaxis_title_input = st.text_input('Title y-axis', value='y')
+
+            # Graph Title
+            graph_title_input = st.text_input('Graph Title', value='Scatter Plot with Predicted Value')
 
     with st.container(border=True):
         col8, col9 = st.columns([0.6, 3], gap='small')
