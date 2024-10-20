@@ -269,10 +269,10 @@ if not final_data.empty:
 
         with col7:
             # X-axis title
-            xaxis_title_input = st.text_input('Title x-axis', value='x')
+            xaxis_title_input = st.text_input('Title x-axis', value='x-axis')
 
             # Y-axis title
-            yaxis_title_input = st.text_input('Title y-axis', value='y')
+            yaxis_title_input = st.text_input('Title y-axis', value='y-axis')
 
             # Graph Title
             graph_title_input = st.text_input('Graph Title', value='Scatter Plot with Predicted Value')
