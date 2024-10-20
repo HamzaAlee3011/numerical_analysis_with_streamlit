@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import sympy as sp
 
+
 # Function for creating intervals at which the values of SF and BM is to be find
 def create_intervals(x_list_original, interval):
     """
@@ -67,16 +68,12 @@ def scatter_plot_normal():
                       yaxis_title='Y-axis',
                       showlegend=True)
 
-    with col7:
-        # Display the scatter plot
-        st.plotly_chart(fig)
+    # Display the scatter plot
+    st.plotly_chart(fig)
+
 
 inter_polated_x_values = []
 inter_polated_y_values = []
-
-import sympy as sp
-
-import sympy as sp
 
 
 def scatter_plot_sympy_interploated():
@@ -98,9 +95,10 @@ def scatter_plot_sympy_interploated():
     fractional_coeffs = [sp.Rational(c).limit_denominator() for c in poly.all_coeffs()]  # Convert to Rational
 
     # Step 6: Rebuild the polynomial equation with fractional coefficients
-    fractional_eq = sum([fractional_coeffs[i] * x**(len(fractional_coeffs) - 1 - i) for i in range(len(fractional_coeffs))])
+    fractional_eq = sum(
+        [fractional_coeffs[i] * x ** (len(fractional_coeffs) - 1 - i) for i in range(len(fractional_coeffs))])
 
-    # Step 7: Generate y values for x values from 1 to 20
+    # Step 7: Generate y values for x values
     for i in create_intervals(x_values, interval=interval):
         y_value = poly_eq.subs(x, i)  # Substitute x = i into the equation
         inter_polated_x_values.append(i)
@@ -113,7 +111,8 @@ def scatter_plot_sympy_interploated():
         fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers+lines', line_shape='spline',
                         name='Interpolated Data Points')
     else:
-        fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers', name='Interpolated Data Points')
+        fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers',
+                        name='Interpolated Data Points')
 
     # Adding original data points
     if connect_original_points:
@@ -130,30 +129,30 @@ def scatter_plot_sympy_interploated():
     # Updating layout for better visibility
     fig.update_layout(
         title='Scatter Plot with Predicted Value',
-        xaxis_title='X-axis',
-        yaxis_title='Y-axis',
+        xaxis_title=xaxis_title_input,
+        yaxis_title=yaxis_title_input,
         showlegend=True,
         xaxis=dict(showgrid=True),  # Enable grid on the X-axis
         yaxis=dict(showgrid=True)  # Enable grid on the Y-axis
     )
 
-    with col7:
-        # Display the scatter plot
-        st.plotly_chart(fig)
 
-        # Display the equation in LaTeX format with fractional coefficients
-        col1a, col1b = st.columns([1, 1], gap='small')
-        with col1a:
-            st.write("Fitted Polynomial f(x):")
-            st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
+    # Display the scatter plot
+    st.plotly_chart(fig)
 
-            # Convert the SymPy equation to string
-            equation_str = str(fractional_eq)
+    # Display the equation in LaTeX format with fractional coefficients
+    col1a, col1b = st.columns([1, 1], gap='small')
+    with col1a:
+        st.write("Fitted Polynomial f(x):")
+        st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
 
-            # Replace '**' with '^' for a more mathematical look
-            equation_str = equation_str.replace('**', '^')
+        # Convert the SymPy equation to string
+        equation_str = str(fractional_eq)
 
-            st.code(f'y = {equation_str}')
+        # Replace '**' with '^' for a more mathematical look
+        equation_str = equation_str.replace('**', '^')
+
+        st.code(f'y = {equation_str}')
 
 
 # st.set_page_config(layout='wide')
@@ -242,7 +241,7 @@ if not final_data.empty:
 
     with col3:
         # Input for the x value to predict
-        x_to_predict = st.number_input('x to predict', value=float(x_values[0]),format="%0.4f")
+        x_to_predict = st.number_input('x to predict', value=float(x_values[0]), format="%0.4f")
 
     y0 = fx_values[0]  # f(x0), where x0 is the first value in x_values
     result = y0
@@ -259,7 +258,7 @@ if not final_data.empty:
         st.code(f'Result: {result}', language='python')
 
     with st.container(border=True):
-        col6, col7 = st.columns([0.5, 3], gap='small')
+        col6, col7 = st.columns(2, gap='small')
 
         with col6:
             # Checkbox for line connection of interpolated points
@@ -268,17 +267,27 @@ if not final_data.empty:
             # Checkbox for line connection of original points
             connect_original_points = st.checkbox('Connect original data points')
 
+        with col7:
+            xaxis_title_input = st.text_input('Title x-axis', value='x')
+            yaxis_title_input = st.text_input('Title y-axis', value='y')
+
+    with st.container(border=True):
+        col8, col9 = st.columns([0.6, 3], gap='small')
+
+        with col8:
             # Interval at which the points have to find out
             interval = st.number_input('Intervals', value=0.0000, min_value=0.0000, format="%0.4f")
 
-        with col7:
+        with col9:
             # scatter_plot_normal()
             scatter_plot_sympy_interploated()
 
-        with col6:
+        with col8:
             # Displaying interpolated values of y at x
 
             interpolated_df = pd.DataFrame({'x': inter_polated_x_values,
                                             'y': inter_polated_y_values})
 
-            interpolated_dataframe_table = st.dataframe(interpolated_df)
+            interpolated_dataframe_table = st.dataframe(interpolated_df, use_container_width=True)
+
+
