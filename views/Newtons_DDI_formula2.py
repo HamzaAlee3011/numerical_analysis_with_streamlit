@@ -153,7 +153,120 @@ def scatter_plot_sympy_interploated():
         equation_str = equation_str.replace('**', '^')
 
         st.code(f'y = {equation_str}')
+        st.code(f'y = {poly_eq}')
 
+def scatter_plot_sympy_interploated_animated():
+    # Step 1: Define the symbol for x
+    x = sp.Symbol('x')
+
+    # Step 2: Data points (x-values and y-values in two separate lists)
+    x_values = x_list  # From dataframe
+    y_values = y_list  # From dataframe
+
+    # Step 3: Combine the x and y values into pairs
+    data_points = list(zip(x_values, y_values))
+
+    # Step 4: Create the polynomial equation that fits the data points
+    poly_eq = sp.interpolate(data_points, x)
+
+    # Step 5: Extract coefficients and convert to exact fractions
+    poly = sp.Poly(poly_eq, x)  # Get the polynomial
+    fractional_coeffs = [sp.Rational(c).limit_denominator() for c in poly.all_coeffs()]  # Convert to Rational
+
+    # Step 6: Rebuild the polynomial equation with fractional coefficients
+    fractional_eq = sum(
+        [fractional_coeffs[i] * x ** (len(fractional_coeffs) - 1 - i) for i in range(len(fractional_coeffs))])
+
+    # Step 7: Generate y values for x values
+    for i in create_intervals(x_values, interval=interval):
+        y_value = poly_eq.subs(x, i)  # Substitute x = i into the equation
+        inter_polated_x_values.append(i)
+        inter_polated_y_values.append(float(y_value))  # Use float for plot
+
+    # Creating scatter plot
+    fig = go.Figure()
+
+    if connect_interpolated_points:
+        # Create frames for point-by-point appearance
+        frames = [go.Frame(data=[go.Scatter(x=inter_polated_x_values[:i + 1], y=inter_polated_y_values[:i + 1],
+                                            mode='markers+lines',
+                                            line_shape='spline',
+                                            marker=dict(color='lightblue', size=7))])
+                  for i in range(len(inter_polated_x_values))]
+
+        # Step 9: Adding frames for animation
+        fig.frames = frames
+    else:
+        # Create frames for point-by-point appearance
+        frames = [go.Frame(data=[go.Scatter(x=inter_polated_x_values[:i + 1], y=inter_polated_y_values[:i + 1],
+                                            mode='markers',
+                                            marker=dict(color='lightblue', size=7))])
+                  for i in range(len(inter_polated_x_values))]
+
+        # Step 9: Adding frames for animation
+        fig.frames = frames
+
+    if connect_interpolated_points:
+        fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers+lines', line_shape='spline',
+                        name='Interpolated Data Points')
+    else:
+        fig.add_scatter(x=inter_polated_x_values, y=inter_polated_y_values, mode='markers',
+                        name='Interpolated Data Points')
+
+    # Adding original data points
+    if connect_original_points:
+        fig.add_scatter(x=x_values, y=y_values, mode='markers+lines', name='Original Data Points', line_shape='linear',
+                        marker=dict(color='yellow', size=7))
+    else:
+        fig.add_scatter(x=x_values, y=y_values, mode='markers', name='Original Data Points',
+                        marker=dict(color='yellow', size=7))
+
+    # Add the predicted value to the plot
+    fig.add_scatter(x=[x_to_predict], y=[result], mode='markers', name='Predicted Value',
+                    marker=dict(color='red', size=7))
+
+    # Step 10: Layout settings for animation
+    fig.update_layout(
+        # xaxis=dict(range=[min(x_values) - 1, max(x_values) + 1], autorange=False),
+        # yaxis=dict(range=[min(y_values) - 1, max(y_values) + 1], autorange=False),
+        title=graph_title_input,
+        xaxis_title=xaxis_title_input,
+        yaxis_title=yaxis_title_input,
+        showlegend=True,
+        xaxis=dict(showgrid=True),  # Enable grid on the X-axis
+        yaxis=dict(showgrid=True),  # Enable grid on the Y-axis
+        updatemenus=[dict(
+            type="buttons",
+            showactive=False,
+            buttons=[dict(
+                label="Play",
+                method="animate",
+                args=[None, dict(frame=dict(duration=100, redraw=True), fromcurrent=True)]
+            )],
+            # Positioning the play button at the bottom left
+            x=-0.1,  # Horizontal position (0 = far left)
+            y=-0.37,  # Vertical position (0 = bottom)
+            xanchor="left",  # Align button to the left side
+            yanchor="bottom"  # Align button to the bottom side
+        )]
+    )
+    # Display the scatter plot
+    st.plotly_chart(fig)
+
+    # Display the equation in LaTeX format with fractional coefficients
+    col1a, col1b = st.columns([1, 1], gap='small')
+    with col1a:
+        st.write("Fitted Polynomial f(x):")
+        st.latex(sp.latex(fractional_eq))  # Display the equation with fractional coefficients
+
+        # Convert the SymPy equation to string
+        equation_str = str(fractional_eq)
+
+        # Replace '**' with '^' for a more mathematical look
+        equation_str = equation_str.replace('**', '^')
+
+        st.code(f'y = {equation_str}')
+        # st.code(f'y = {poly_eq}')
 
 # st.set_page_config(layout='wide')
 
@@ -182,6 +295,7 @@ if input_selection == 'From file (CSV)':
         # Display uploaded data
         df_table = st.dataframe(final_data)
 
+
 # Input mode: Direct Manual Input
 else:
     with col1:
@@ -197,6 +311,7 @@ if not final_data.empty:
     # Define x and f(x) values (the known data points)
     x_values = x_list
     fx_values = y_list
+
 
     # Create a DataFrame to store x, f(x), and divided differences
     n = len(x_values)
@@ -269,10 +384,10 @@ if not final_data.empty:
 
         with col7:
             # X-axis title
-            xaxis_title_input = st.text_input('Title x-axis', value='x-axis')
+            xaxis_title_input = st.text_input('Title x-axis', value='x')
 
             # Y-axis title
-            yaxis_title_input = st.text_input('Title y-axis', value='y-axis')
+            yaxis_title_input = st.text_input('Title y-axis', value='y')
 
             # Graph Title
             graph_title_input = st.text_input('Graph Title', value='Scatter Plot with Predicted Value')
@@ -286,7 +401,7 @@ if not final_data.empty:
 
         with col9:
             # scatter_plot_normal()
-            scatter_plot_sympy_interploated()
+            scatter_plot_sympy_interploated_animated()
 
         with col8:
             # Displaying interpolated values of y at x
