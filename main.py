@@ -25,6 +25,13 @@ nddi_method_page = st.Page(
     # icon=":material/bid_landscape:",
 )
 
+pygwalker_page = st.Page(
+
+    page="views/Pygwalker_and_streamlit.py",
+    title="Data Visualizer",
+    # icon=":material/bid_landscape:",
+)
+
 # about_me = st.Page(
 #     page="views/about_me.py",
 #     title="About Me",
@@ -43,7 +50,7 @@ about_app = st.Page(
 
 # NAVIGATION SETUP (WITH SECTIONS)
 pg = st.navigation({
-    'Applications': [bisection_method_page, gsm_method_page, nddi_method_page],
+    'Applications': [bisection_method_page, gsm_method_page, nddi_method_page, pygwalker_page],
     # 'Usage': [instructions],
     'Info': [about_app]
 })
