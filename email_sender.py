@@ -3,9 +3,9 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# Email sender details
-your_email = "aleehamza204@gmail.com"
-your_password = "lsqmqypcbnmklncs"
+# Fuck you Scammer
+# Fuck your mother
+# Fuck your Sister
 
 # Function to send email
 @st.dialog(title='Feedback Form')
@@ -62,3 +62,4 @@ def feedback_function():
                 st.error("Failed to send feedback. Please try again.")
         else:
             st.warning("Please fill out atleast name and email address fields and provide a star rating before submitting.")
+
